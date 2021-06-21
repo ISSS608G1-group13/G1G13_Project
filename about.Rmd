@@ -1,0 +1,9 @@
+---
+title: "About this blog"
+description: |
+  This project is built by G1-Group 13 of ISSS608.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```

@@ -1,0 +1,44 @@
+---
+title: "Proposal"
+description: |
+  This is the proposal of the project.
+author:
+  - name: G1-Group13
+date: 06-21-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# 1.	Motivation
+
+Movement data in space and time provide critical information about the behavior of objects studied, i.e., vehicles, humans, and animals. Insights from spatial and temporal movements drive many human and ecological studies. These studies enable in-depth analysis and understanding of complex processes like human migration, forest fires and natural disasters as well as mobility and transportation.
+
+A person's life and consumption path can provide abundant information for us. As GPS data are becoming increasingly prevalent as locational information in movement studies, we can identify the most probable route from a set of GPS pedestrian trajectories and consumption information. We can further demonstrate the relationship between uncertainty in individual GPS measurements at different scales and how these affect the fine-scale movement descriptions.
+
+# 2.	Problems Introduction
+
+* Identify the complex relationships among all of these people and organizations.
+* Identify anomalies and suspicious behaviors.
+* Identify which people use which credit and loyalty cards.
+
+# 3.	Related Work
+
+* Try to figure out the tracks of all the employees based on the GPS tracking of cars and loyalty cards, and then compare the GPS track with the location of celebration. Map the tracks of employee in the map provided, and the map will show the tracks and locations of consumption dynamically. At the same time, by using the unique loyalty number, unique card number and tracks we can identify which people use which credit and loyalty cards.
+* Plot the consumption of employees, and then find out the suspicious behaviors, like extremely high consumption, repeated consumption in some special locations or make some consumptions nearby the location of celebration on the date of celebration.
+* Make the employees’ relationship net based on the GPS information. We may see some people will have similar tracks in some dates, and then we can get that they will have more intimate relationships. If a person appears in one location repeatedly, he or she may have potential relationship with this organization.
+
+# 4.	Approach
+
+* Use R to clean and tidy data: clean missing values and combine some dataset for further analysis. The package of R used will be tidyr and dplyr.
+* Visualisation: two kinds of graphs will be plotted. The first one is path diagram which is aim to plot the living and working track of each employee. The another one is relationship net graph. According to these two graphs we will summarize special information for readers.
+* R shiny: make an application that can see the current employment information, GPS tracks, consumption information and relationship net of each employee. In this application, any suspicious behaviors or special locations will be highlighted.
+* Text analysis: By using the dataset from other challenges, we will analyze the resumes of employees in Challenge 1.
+* Build the GitHub Link and Website.
+
+
