@@ -3,17 +3,17 @@
     {
       "path": "about.html",
       "title": "About this blog",
-      "description": "Some additional details about the blog",
+      "description": "This project is built by G1-Group 13 of ISSS608.",
       "author": [],
       "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2021-06-21T10:51:44+08:00"
+      "last_modified": "2021-06-21T11:04:29+08:00"
     },
     {
       "path": "index.html",
       "title": "G1G13_Project",
       "author": [],
       "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2021-06-21T10:51:45+08:00"
+      "last_modified": "2021-06-21T11:04:04+08:00"
     }
   ],
   "collections": ["posts/posts.json"]
