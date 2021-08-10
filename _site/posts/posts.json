@@ -1,39 +1,5 @@
 [
   {
-    "path": "posts/2021-08-10-practice-research-paper/",
-    "title": "Practice Research Paper",
-    "description": "A short description of the post.",
-    "author": [
-      {
-        "name": "G1-Group13",
-        "url": {}
-      }
-    ],
-    "date": "2021-08-10",
-    "categories": [],
-    "contents": "\r\n\r\n\r\n\r\n",
-    "preview": {},
-    "last_modified": "2021-08-10T17:50:56+08:00",
-    "input_file": "practice-research-paper.knit.md"
-  },
-  {
-    "path": "posts/2021-08-10-poster/",
-    "title": "Poster",
-    "description": "A short description of the post.",
-    "author": [
-      {
-        "name": "G1-Group13",
-        "url": {}
-      }
-    ],
-    "date": "2021-08-10",
-    "categories": [],
-    "contents": "\r\n\r\n\r\n\r\n",
-    "preview": {},
-    "last_modified": "2021-08-10T17:51:08+08:00",
-    "input_file": "poster.knit.md"
-  },
-  {
     "path": "posts/2021-08-10-application-and-user-guide/",
     "title": "Application and User Guide",
     "description": "A short description of the post.",
@@ -49,6 +15,23 @@
     "preview": {},
     "last_modified": "2021-08-10T18:02:04+08:00",
     "input_file": "application-and-user-guide.knit.md"
+  },
+  {
+    "path": "posts/2021-08-10-poster/",
+    "title": "Poster",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "G1-Group13",
+        "url": {}
+      }
+    ],
+    "date": "2021-08-10",
+    "categories": [],
+    "contents": "\r\nIntroduction\r\nThis is the posterdown_betterport template for the {posterdown} package! I was inspired by the twitter thread of Mike Morrison and wanted to apply the #betterposter concept to the reproducible (yet simple to use) functionality of the {posterdown} package [@R-posterdown]. If you’re not an R user don’t sweat as you do NOT need to use it at all! Feel free to use only the Markdown functionality of this package :)\r\nObjectives\r\nPick a template layout.\r\nWrite/ create your poster content distraction free.\r\nLet posterdown do its thing!\r\nMethods\r\nI will show here how to include poster elements that may be useful, such as an equation using mathjax:\r\n\\[\r\nE = mc^2\r\n\\]\r\nTo reference a citation you can add your .bib file to the working directory and name it in the YAML metadata or generate an automated one as done here, then you only need to reference the label value in the .bib file. For example this package is built on top of the wonderful {pagedown} package and I will cite it at the end of this sentance using this in the rmd [@R-pagedown] [@R-pagedown].\r\nTo get a better understanding of how to include features like these please refer to the {posterdown} wiki.\r\nNow on to the results!\r\nResults\r\nHere you may have some figures to show off, bellow I have made a scatterplot with the infamous Iris dataset and I can even reference to the figure automatically like this, Figure \\@ref(fig:irisfigure), Figure 1.\r\n\r\n\r\n\r\nFigure 1: Here is a caption for the figure. This can be added by using the “fig.cap” option in the r code chunk options, see this link from the legend himself, Yihui Xie.\r\n\r\n\r\n\r\nMaybe you want to show off some of that fancy code you spent so much time on to make that figure, well you can do that too! Just use the echo=TRUE option in the r code chunk options, Figure 2!\r\n\r\n\r\n#trim whitespace\r\npar(mar=c(2,2,0,0))\r\n#plot boxplots\r\nboxplot(iris$Sepal.Width~iris$Species,\r\n        col = \"#008080\", \r\n        border = \"#0b4545\",\r\n        ylab = \"Sepal Width (cm)\",\r\n        xlab = \"Species\")\r\n\r\n\r\n\r\n\r\nFigure 2: Boxplots, so hot right now!\r\n\r\n\r\n\r\nHow about a neat table of data? See, Table 1:\r\n\r\n\r\nTable 1: A table made with the knitr::kable function.\r\n\r\n\r\nSepal  Length\r\n\r\n\r\nSepal  Width\r\n\r\n\r\nPetal  Length\r\n\r\n\r\nPetal  Width\r\n\r\n\r\nSpecies\r\n\r\n\r\n5.1\r\n\r\n\r\n3.5\r\n\r\n\r\n1.4\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.9\r\n\r\n\r\n3.0\r\n\r\n\r\n1.4\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.7\r\n\r\n\r\n3.2\r\n\r\n\r\n1.3\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.6\r\n\r\n\r\n3.1\r\n\r\n\r\n1.5\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n5.0\r\n\r\n\r\n3.6\r\n\r\n\r\n1.4\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n5.4\r\n\r\n\r\n3.9\r\n\r\n\r\n1.7\r\n\r\n\r\n0.4\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.6\r\n\r\n\r\n3.4\r\n\r\n\r\n1.4\r\n\r\n\r\n0.3\r\n\r\n\r\nsetosa\r\n\r\n\r\n5.0\r\n\r\n\r\n3.4\r\n\r\n\r\n1.5\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.4\r\n\r\n\r\n2.9\r\n\r\n\r\n1.4\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.9\r\n\r\n\r\n3.1\r\n\r\n\r\n1.5\r\n\r\n\r\n0.1\r\n\r\n\r\nsetosa\r\n\r\n\r\n5.4\r\n\r\n\r\n3.7\r\n\r\n\r\n1.5\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.8\r\n\r\n\r\n3.4\r\n\r\n\r\n1.6\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.8\r\n\r\n\r\n3.0\r\n\r\n\r\n1.4\r\n\r\n\r\n0.1\r\n\r\n\r\nsetosa\r\n\r\n\r\n4.3\r\n\r\n\r\n3.0\r\n\r\n\r\n1.1\r\n\r\n\r\n0.1\r\n\r\n\r\nsetosa\r\n\r\n\r\n5.8\r\n\r\n\r\n4.0\r\n\r\n\r\n1.2\r\n\r\n\r\n0.2\r\n\r\n\r\nsetosa\r\n\r\n\r\nReferences\r\n\r\n\r\n\r\n",
+    "preview": "posts/2021-08-10-poster/poster_files/figure-html5/irisfigure-1.png",
+    "last_modified": "2021-08-10T23:00:23+08:00",
+    "input_file": "poster.knit.md"
   },
   {
     "path": "posts/2021-06-21-proposal/",
