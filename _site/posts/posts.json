@@ -1,5 +1,56 @@
 [
   {
+    "path": "posts/2021-08-10-practice-research-paper/",
+    "title": "Practice Research Paper",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "G1-Group13",
+        "url": {}
+      }
+    ],
+    "date": "2021-08-10",
+    "categories": [],
+    "contents": "\r\n\r\n\r\n\r\n",
+    "preview": {},
+    "last_modified": "2021-08-10T17:50:56+08:00",
+    "input_file": "practice-research-paper.knit.md"
+  },
+  {
+    "path": "posts/2021-08-10-poster/",
+    "title": "Poster",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "G1-Group13",
+        "url": {}
+      }
+    ],
+    "date": "2021-08-10",
+    "categories": [],
+    "contents": "\r\n\r\n\r\n\r\n",
+    "preview": {},
+    "last_modified": "2021-08-10T17:51:08+08:00",
+    "input_file": "poster.knit.md"
+  },
+  {
+    "path": "posts/2021-08-10-application-and-user-guide/",
+    "title": "Application and User Guide",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "G1-Group13",
+        "url": {}
+      }
+    ],
+    "date": "2021-08-10",
+    "categories": [],
+    "contents": "\r\nDistill is a publication format for scientific and technical writing, native to the web.\r\nLearn more about using Distill at https://rstudio.github.io/distill.\r\n\r\n\r\n\r\n",
+    "preview": {},
+    "last_modified": "2021-08-10T17:55:08+08:00",
+    "input_file": "application-and-user-guide.knit.md"
+  },
+  {
     "path": "posts/2021-06-21-proposal/",
     "title": "Proposal",
     "description": "This is the proposal of the project.",
