@@ -1,5 +1,5 @@
 ---
-title: "About this blog"
+title: "About This Project"
 description: |
   This project is built by G1-Group 13 of ISSS608.
 ---
@@ -7,3 +7,10 @@ description: |
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+There are five main parts of this project, contents are available by clinking the following links:
+
+1. Proposal
+2. Practice Research Paper
+3. Poster
+4. Application and User Guide

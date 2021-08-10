@@ -45,9 +45,9 @@
     ],
     "date": "2021-08-10",
     "categories": [],
-    "contents": "\r\nDistill is a publication format for scientific and technical writing, native to the web.\r\nLearn more about using Distill at https://rstudio.github.io/distill.\r\n\r\n\r\n\r\n",
+    "contents": "\r\nThe application developed can be accessed from here[].\r\n\r\n\r\n\r\n",
     "preview": {},
-    "last_modified": "2021-08-10T17:55:08+08:00",
+    "last_modified": "2021-08-10T18:02:04+08:00",
     "input_file": "application-and-user-guide.knit.md"
   },
   {
