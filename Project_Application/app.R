@@ -11,7 +11,7 @@ library(plotly)
 # Import dataset 
 #location_num <- read.csv("./data/location num.csv/")
 
-# Define UI for application that draws a histogram
+
 ui <- fluidPage(
     theme = shinytheme("cerulean"),
     navbarPage(
@@ -22,8 +22,7 @@ ui <- fluidPage(
                    tabPanel("Popular Locations", 
                             sidebarLayout(
                                 sidebarPanel(
-                                    radioButtons(
-                                        inputId = "location_fre",
+                                    radioButtons("locationfre",
                                         label = "Popular locations based on:",
                                         choices = c("Credit Card"="num_credit",
                                                     "Loyalty Card"="num_loyalty"),
@@ -37,21 +36,38 @@ ui <- fluidPage(
                                 )),
                    tabPanel("Hotpoints of Social News", 
                             sidebarLayout(
-                                sidebarPanel("input","one"),
-                                mainPanel("output","one")))),
+                                # Sidebar with a slider and selection inputs
+                                sidebarPanel(
+                                    "input"
+                                ),
+                                # Show Word Cloud
+                                mainPanel(
+                                    "output"
+                                )
+                            )
+                            )),
         tabPanel("Consumption Analysis", "one"),
         tabPanel("Path Visualization", "two"),
         tabPanel("Network","three")
         ))
 
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
     output$LocationPlot <- renderPlotly({
         ggplot(data = location_num,
-               aes(x=location,y=input$location_fre))+
-            geom_point()
+               aes(x=input$locationfre,
+                   y=location))+
+            geom_col()+
+            ylab("Location") + 
+            xlab("Frequency")+
+            ggtitle("The Frequency of Each Location")
     })
+    
+    
+    
+    
+    
+    
 }
 
 # Run the application 

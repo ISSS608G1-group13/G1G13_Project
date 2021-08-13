@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 Movement data in space and time provide critical information about the behavior of objects studied, i.e., vehicles, humans, and animals. Insights from spatial and temporal movements drive many human and ecological studies. These studies enable in-depth analysis and understanding of complex processes like human migration, forest fires and natural disasters as well as mobility and transportation.
 
-A person's life and consumption path can provide abundant information for us. As GPS data are becoming increasingly prevalent as locational information in movement studies, we can identify the most probable route from a set of GPS pedestrian trajectories and consumption information. We can further demonstrate the relationship between uncertainty in individual GPS measurements at different scales and how these affect the fine-scale movement descriptions.
+A person's life and consumption path can provide abundant information for us. As GPS data are becoming increasingly prevalent as locationa information in movement studies, we can identify the most probable route from a set of GPS pedestrian trajectories and consumption information. We can further demonstrate the relationship between uncertainty in individual GPS measurements at different scales and how these affect the fine-scale movement descriptions.
 
 # 2.	Problems Introduction
 
