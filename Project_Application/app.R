@@ -8,10 +8,13 @@ library(ggplot2)
 library(igraph)
 library(plotly)
 library(tidyr)
+library(RColorBrewer)
 
 packages = c("tidyverse","tidyr","tidyverse","dplyr","sp","raster","sf",
              "vctrs","clock","tmap","rgdal","readr","ggplot2","plotly","tmap","gganimate","av","gifski",
-             "igraph","tidygraph","ggraph","visNetwork","lubridate","DT","collapsibleTree")
+             "igraph","tidygraph","ggraph","visNetwork","lubridate","DT","collapsibleTree",
+             'tidytext','widyr', 'wordcloud','DT', 'ggwordcloud','textplot', 'lubridate',
+             'hms','tidyverse','tidygraph', 'ggraph','igraph')
 for (p in packages){
     if(!require(p, character.only = T)){
         install.packages(p)
@@ -20,7 +23,7 @@ for (p in packages){
 }
 
 # Import dataset 
-#location_num <- read.csv("./location num.csv/")
+#location_num <- read_csv("./location num.csv/")
 #bgmap <- raster("./MC2-tourist.tif")
 #Abila_st <- st_read(dsn = "./Geospatial",
  #                   layer = "Abila")
@@ -36,29 +39,86 @@ for (p in packages){
 #CarTrack <- car_assignments %>% 
 #    select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
 
+#news <- "./News Articles/"
+
 # Dataset Process
+
+
 #gps$Timestamp <- date_time_parse(gps$Timestamp,
 #                                 zone="",
 #                                 format="%m/%d/%Y %H:%M")
 #creditcard$timestamp <- date_time_parse(creditcard$timestamp,
 #                                        zone="",
-#                                        format="%m/%d/%Y %H:%M")
+ #                                       format="%m/%d/%Y %H:%M")
 
 #loyaltycard$timestamp <- date_time_parse(loyaltycard$timestamp,
 #                                         zone="",
-#                                         format="%m/%d/%Y")
+ #                                        format="%m/%d/%Y")
 
 # Build new columns for day and hour and change the data type
-credit_hour <- creditcard
-credit_hour$hour <- as.numeric(get_hour(credit_hour$timestamp))
-credit_hour$day <- as.numeric(get_day(credit_hour$timestamp))
+#credit_hour <- creditcard
+#credit_hour$hour <- as.numeric(get_hour(credit_hour$timestamp))
+#credit_hour$day <- as.numeric(get_day(credit_hour$timestamp))
 
 # Wrangle the dataset for the frequency of purchase for every day
-credit_hour_num <- credit_hour %>% 
-    group_by(location,day,hour) %>% 
-    summarise(frequency=n())
+#credit_hour_num <- credit_hour %>% 
+#    group_by(location,day,hour) %>% 
+#    summarise(frequency=n())
+
+# Word Cloud data processing
+#read_folder <- function(infolder){
+ #   tibble(file = dir(infolder,
+   #                   full.names = TRUE))%>%
+    #    mutate(text = map(file,
+     #                     read_lines))%>%
+      #  transmute(id = basename(file),
+       #           text)%>%
+       # unnest(text)
+#}
+
+#raw_text <- tibble(folder=
+#                       dir(news,
+#                           full.names=TRUE)) %>%
+ #   
+ #   mutate(folder_out = map(folder,read_folder))%>%
+ #   unnest(cols = c(folder_out))%>%
+  #  transmute(newsgroup = basename(folder),
+  #            id,text)
+
+#raw_text %>%
+#    group_by(newsgroup)%>%
+#    summarize(messages = n_distinct(id))
+
+#cleaned_text <- raw_text %>%
+#    group_by(newsgroup, id)%>%
+#    filter(cumsum(text == "") > 0,
+#           cumsum(str_detect(
+#               text, "^--"))==0) %>%
+#    ungroup()
+
+#cleaned_text <- cleaned_text %>%
+#    filter(str_detect(text,"^[^>]+[A-Za-z\\d]")
+ #          | text == "",
+  #         !str_detect(text,
+  #                     "writes(:|\\.\\.\\.)$"),
+  #         !str_detect(text,
+  #                     "^In article <")
+   # )
+#usenet_words <- cleaned_text %>%
+#    unnest_tokens(word, text) %>%
+#    filter(str_detect(word, "[a-z']$"),
+#           !word %in% stop_words$word)
+
+#usenet_words %>%
+#    count(word, sort = TRUE)
+
+#words_by_newsgroup <- usenet_words %>%
+#    count(newsgroup, word, sort = TRUE) %>%
+  #  ungroup()
+#
 
 
+#Shiny Part
 ui <- fluidPage(
     theme = shinytheme("cerulean"),
     navbarPage(
@@ -82,13 +142,26 @@ ui <- fluidPage(
                                     plotlyOutput("LocationPlot")
                                     )
                                 )),
-                   tabPanel("Hotpoints of Social News", 
+                   tabPanel("Hotpoints of News Articles", 
                             sidebarLayout(
                                 sidebarPanel(
-                                    "input"
+                                    selectInput("news", 
+                                                label = "Choose news name:",
+                                                choices = unique(raw_text$newsgroup),
+                                                selected = "All News Today"),
+                                    hr(),
+                                    sliderInput("freq",
+                                                "Minimum Frequency:",
+                                                min = 1,  max = 212, value = 5),
+                                    sliderInput("max",
+                                                "Maximum Number of Words:",
+                                                min = 1,  max = 300,  value = 100
+                                            ),
+                                    submitButton("update", "Update")
                                 ),
                                 mainPanel(
-                                    "output"
+                                    plotOutput("hotpoints"),
+                                    plotlyOutput("barhotpoints")
                                 )
                             )
                             )),
@@ -144,13 +217,14 @@ server <- function(input, output, session) {
     
     output$LocationPlot <- renderPlotly({
         
-        data <- location_frequency %>% 
-            filter(cardtype==input$locationfre)
-        
+        data <- location_frequency %>%
+          filter(cardtype==input$locationfre) 
+
+
         ggplot(data = data, 
-               aes(x = frequency, y= location)) + 
+               aes(x = frequency, y= reorder(location, frequency))) + 
             geom_bar(stat = "identity", 
-                     color = "grey", fill = "light blue")+
+                     color = "white", fill = "light blue")+
             ylab("Location") + 
             xlab("Frequency")+
             ggtitle("The Frequency of Each Location")
@@ -198,6 +272,37 @@ server <- function(input, output, session) {
                    title = "Daily Purchase Value of Credit Card") %>% 
             add_trace(mode = 'markers',
                       name="Detail")
+    })
+    
+    output$hotpoints <- renderPlot({
+        data <- words_by_newsgroup %>% 
+            filter(newsgroup==input$news)
+        
+        
+        wordcloud(data$word,
+                  data$n,
+                  min.freq = input$freq,
+                  max.words = input$max,
+                  random.order = FALSE,
+                  rot.per = 0.35,
+                  colors = brewer.pal(8,"Dark2"))
+        
+    })
+    
+    output$barhotpoints <- renderPlotly({
+      
+      data <- words_by_newsgroup %>% 
+        filter(newsgroup==input$news)
+      
+      top20 <- head(data, 20)
+      top20$word <- reorder(top20$word, top20$n)
+      
+      ggplot(top20, aes(x = word, y = n, fill = word, label = n)) +
+        geom_bar(stat="identity", show.legend = FALSE,
+                 color = "white", fill = "light blue") +
+        coord_flip() +
+        labs(title = "Top 20 Most Used Words in News", x = "Word", y = "Word Count") +
+        geom_label(aes(fill = word),colour = "white", fontface = "bold", show.legend = FALSE)
     })
 
 }
