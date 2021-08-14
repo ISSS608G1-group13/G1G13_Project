@@ -30,6 +30,12 @@ for (p in packages){
 #creditcard <- read.csv("./cc_data.csv")
 #loyaltycard <- read.csv("./loyalty_data.csv")
 
+#car_assignments <- read.csv("./car-assignments.csv")
+
+#car_assignments$Name <- paste(car_assignments$FirstName, car_assignments$LastName)
+#CarTrack <- car_assignments %>% 
+#    select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
+
 # Dataset Process
 #gps$Timestamp <- date_time_parse(gps$Timestamp,
 #                                 zone="",
