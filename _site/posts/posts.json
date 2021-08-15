@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2021-08-15-poster/",
+    "title": "Poster",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Yu Yaxin <br>Li Yuhong <br>Xu Dan",
+        "url": {}
+      }
+    ],
+    "date": "2021-08-15",
+    "categories": [],
+    "contents": "\r\nThe link of poster is available here.\r\n\r\n\r\n\r\n",
+    "preview": {},
+    "last_modified": "2021-08-15T22:09:50+08:00",
+    "input_file": "poster.knit.md"
+  },
+  {
     "path": "posts/2021-08-10-application-and-user-guide/",
     "title": "Application and User Guide",
     "description": "For Shiny Application created by G1 - Team 13",

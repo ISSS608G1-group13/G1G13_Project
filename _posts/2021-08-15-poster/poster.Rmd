@@ -1,0 +1,20 @@
+---
+title: "Poster"
+description: |
+  A short description of the post.
+author:
+  - name: Yu Yaxin <br>Li Yuhong <br>Xu Dan
+    url: {}
+date: 08-15-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+The link of poster is available [here](./Poster-G1G13.html/).
+

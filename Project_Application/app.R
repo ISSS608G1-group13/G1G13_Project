@@ -192,6 +192,10 @@ ui <- fluidPage(
                       mainPanel(width = 15, style="margin-left:0%; margin-right:4%",
                                 fluidRow(column(7,(h3("Welcome to GAStech Employees Behavior Analysis Tool", style="margin-top:0px;"))),
                                          (column(4,actionButton("btn_landing",label="Help: User Guide",icon=icon('question-circle'),class="down")))),
+                                fluidRow(wellPanel(column(4, "GAStech, an oil-products company from Tethys, is expanding into Kronos - an island country, built good relations with the local government as well.Not only GAStech got considerable profit, but also has an impact on the local natural environment. At the beginning of 1997,the residents of Elodis agricultural town located near the capital of Kronos began to pay attention to an abnormal increase in the occurrence of illnesses such as cancer and birth defects.And they believe this is related to Gastech’s business. The residents set up their own POK (Protectors of Kronos) organization to protect the ecological environment in Kronos and prevent continuous deterioration.
+
+During Gastech’s celebration party in 2014, the unexplained disappearance of some employees was suspected to be related to the POK organization. And now we got the employees’ credit card and loyalty card transaction data, and also their GPS record, to identify anomalies. Due to this, the purpose of this report is to analyze the consumption behaviors of employees at different times and places, use R Studio to visualize the data, screen the existing suspicious behaviors, match the employees with varies of crads, and draw suggestions and conclusions.")
+                                         )),
                       )
              ),
              navbarMenu("Background Analysis",
