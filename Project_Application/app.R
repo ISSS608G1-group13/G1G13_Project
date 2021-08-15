@@ -9,18 +9,34 @@ library(igraph)
 library(plotly)
 library(tidyr)
 library(RColorBrewer)
-
-packages = c("tidyverse","tidyr","tidyverse","dplyr","sp","raster","sf",
-             "vctrs","clock","tmap","rgdal","readr","ggplot2","plotly","tmap","gganimate","av","gifski",
-             "igraph","tidygraph","ggraph","visNetwork","lubridate","DT","collapsibleTree",
-             'tidytext','widyr', 'wordcloud','DT', 'ggwordcloud','textplot', 'lubridate',
-             'hms','tidyverse','tidygraph', 'ggraph','igraph')
-for (p in packages){
-  if(!require(p, character.only = T)){
-    install.packages(p)
-  }
-  library(p, character.only = T)
-}
+library(tidyr)
+library(dplyr)
+library(sp)
+library(raster)
+library(vctrs)
+library(clock)
+library(tmap)
+library(rgdal)
+library(readr)
+library(gganimate)
+library(av)
+library(gifski)
+library(tidygraph)
+library(ggraph)
+library(visNetwork)
+library(lubridate)
+library(DT)
+library(collapsibleTree)
+library(tidytext)
+library(widyr)
+library(wordcloud)
+library(DT)
+library(ggwordcloud)
+library(textplot)
+library(lubridate)
+library(hms)
+library(tidyverse)
+library(tidygraph)
 
 # Import dataset 
 location_num <- read_csv("./data/location num.csv")
