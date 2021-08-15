@@ -75,6 +75,50 @@ loyaltycard$timestamp <- date_time_parse(loyaltycard$timestamp,
                                          zone="",
                                          format="%m/%d/%Y")
 
+# Network part data process
+# Transforming data
+creditcard_final_net <- creditcard
+
+creditcard_final_net$last4ccnum <- as.character(creditcard_final_net$last4ccnum)
+creditcard_final_net$Day  <-  get_day(creditcard_final_net$timestamp)
+creditcard_final_net$Hour <-  get_hour(creditcard_final_net$timestamp)
+
+# Creating nodes list
+sources <- creditcard_final_net %>%
+  distinct(last4ccnum) %>%
+  rename(label = last4ccnum)
+destinations <- creditcard_final_net %>%
+  distinct(location) %>%
+  rename(label = location)
+cc_nodes <- full_join(sources, 
+                      destinations, 
+                      by = "label")
+cc_nodes <- cc_nodes %>% 
+  rowid_to_column("id")
+
+# Creating and tidying edges list
+edges <- creditcard_final_net %>%  
+  group_by(last4ccnum, location, Day, Hour) %>%
+  summarise(weight = n()) %>% 
+  ungroup()
+
+cc_edges <- edges %>% 
+  left_join(cc_nodes, 
+            by = c("last4ccnum" = "label")) %>% 
+  rename(from = id)
+
+cc_edges <- cc_edges %>% 
+  left_join(cc_nodes, 
+            by = c("location" = "label")) %>% 
+  rename(to = id)
+
+cc_edges <- select(cc_edges, from, to, 
+                   Day, Hour, weight)
+
+cc_graph <- tbl_graph(nodes = cc_nodes, 
+                      edges = cc_edges, 
+                      directed = FALSE)
+
 # Build new columns for day and hour and change the data type
 credit_hour <- creditcard
 credit_hour$hour <- as.numeric(get_hour(credit_hour$timestamp))
@@ -140,7 +184,7 @@ words_by_newsgroup <- usenet_words %>%
 
 #Shiny Part
 ui <- fluidPage(
-  theme = shinytheme("cerulean"),
+  theme = shinytheme("Lux"),
   navbarPage(id = "intabset",
              title = "GAStech Employees Behavior Analysis",
              tabPanel(title = "Home", icon = icon("home"),
@@ -183,7 +227,7 @@ ui <- fluidPage(
                                                  "Maximum Number of Words:",
                                                  min = 1,  max = 300,  value = 100
                                      ),
-                                     submitButton("update", "Update")
+                                     submitButton("Update")
                                    ),
                                    mainPanel(
                                      plotlyOutput("barhotpoints"),
@@ -196,15 +240,12 @@ ui <- fluidPage(
                                  value = "tabpanel4",
                                  sidebarLayout(
                                    sidebarPanel(
-                                     checkboxGroupInput("chooselocations",
-                                                        label = "Choose locations to compare:",
-                                                        choices = unique(credit_hour_num$location),
-                                                        selected = unique(credit_hour_num$location)),
+                                     
                                      radioButtons("choosetype",
                                                   label = "Choose day or time:",
                                                   choices = c("Day"="day",
                                                               "Time(hour)"="hour")),
-                                     submitButton("update", "Update")
+                                     submitButton("Update")
                                    ),
                                    mainPanel(
                                      plotlyOutput("comparison")
@@ -227,7 +268,22 @@ ui <- fluidPage(
                           plotlyOutput("consumption_hour"),
                           plotlyOutput("consumption_value")
                         )
-                      ))),
+                      )),
+                      tabPanel("Consumption Locations of Credit Card", 
+                               value = "tabpanel4",
+                               sidebarLayout(
+                                 sidebarPanel(
+                                   selectInput("cc_card", 
+                                               "Choose credit card:",
+                                               choices = unique(creditcard_final_net$last4ccnum),
+                                               selected = 3484),
+                                   submitButton("Update")
+                                 ),
+                                 mainPanel(
+                                   plotOutput("cc_locations")
+                                 )
+                               )
+                      )),
              tabPanel("Path Visualization", 
                       sidebarLayout(
                         sidebarPanel(
@@ -248,8 +304,8 @@ ui <- fluidPage(
                             plotlyOutput("gpspath")
                           )
                         )),
-             tabPanel("Network",
-                      selectInput("state", "Choose a state:",
+             tabPanel("a",
+                      selectInput("", "Choose credit card:",
                                   list(`East Coast` = list("NY", "NJ", "CT"),
                                        `West Coast` = list("WA", "OR", "CA"),
                                        `Midwest` = list("MN", "WI", "IA"))
@@ -277,10 +333,9 @@ server <- function(input, output, session) {
   })
   
   output$consumption_hour <- renderPlotly({
-    #         Build new dataset for selected location
+    #Build new dataset for selected location
     data <- credit_hour_num %>% 
       filter(location==input$location) 
-    
     
     #Draw the heatmap
     ggplot(data=data,
@@ -300,7 +355,7 @@ server <- function(input, output, session) {
   })
   
   output$consumption_value <- renderPlotly({
-    #         Build new dataset for selected location
+    #Build new dataset for selected location
     data <- credit_hour %>% 
       filter(location==input$location) %>% 
       group_by(day) %>% 
@@ -353,19 +408,21 @@ server <- function(input, output, session) {
   })
   
   output$comparison <- renderPlotly({
-    data <- credit_hour_num 
- #     filter(location==input$chooselocations)
+    data <- credit_hour_num %>%
+      group_by(location,input$choosetype) %>% 
+      summarise(frequency=sum(frequency))
     
-    plot_ly(data=data,
-            x= ~input$choosetype,
-            y= ~location,
-            z= ~frequency,
-            text = ~paste0("Value:", input$choosetype,     
-                          "<br>Frequency:", frequency,
-                          "<br>Location:",location), 
-            hoverinfo = "text",
-            type = "heatmap") %>%
-      layout(tittle = 'Consumption Comparison of Locations')
+    name <- names(data)
+    
+    ggplot(data=data,
+           aes(x=name[2],y=location,fill=frequency))+
+      geom_tile()+
+      scale_fill_gradient2(low="blue",
+                           high="red",
+                           na.value = 'white')+
+      labs(x="Day",
+           title="Frequency of Credit Card Purchase")+
+      theme(plot.title=element_text(hjust=0.5))
       
   }) 
   
@@ -396,8 +453,27 @@ server <- function(input, output, session) {
                     rownames = FALSE)
     
   })
-
   
+  output$cc_locations <- renderPlot({
+    data_node <- cc_nodes %>% 
+      filter(label==input$cc_card)
+    
+    data_edges <- cc_edges %>% 
+      filter(from==input$cc_card)
+    
+    cc_graph <- tbl_graph(nodes = data_node, 
+                          edges = data_edges, 
+                          directed = FALSE) 
+    visNetwork(data_node,
+               data_edges) %>%
+      visIgraphLayout(layout = "layout_with_fr") %>%
+      visOptions(highlightNearest = TRUE,
+                 nodesIdSelection = TRUE) %>%
+      visLegend() %>%
+      visLayout(randomSeed = 123)
+    
+  })
+
   observeEvent(input$btn_landing, {
     updateTabsetPanel(session,
                       "intabset" ,
