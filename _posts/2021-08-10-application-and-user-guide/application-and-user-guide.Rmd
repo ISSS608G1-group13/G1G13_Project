@@ -23,29 +23,68 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Application User Guide
 
-# 1.Interface design
+# 1 Interface design
 The interface mainly about three parts.
 插入图片
 
 ## 1.1 For Navigation Bar
 The top navigation bar has 5 main sections with drop-down selections:  
 
-**i.Home**  
+**i. Home**  
 
-**ii.Background Analysis**  
+**ii. Background Analysis**  
     + Popular Locations  
     + Hotpoints of News Articles  
     
-**ii.Consumption Analysis**  
+**ii. Consumption Analysis**  
     + Consumption Comparison  
     + Consumption of Each Location  
-    + Consumption Locations of Credit Card   
     
-**iii.Path Visualization**
+**iii. Path Visualization**
 
-##1.2 For Side Panel
+**iv. Relationship**
+
+
+## 1.2 For Side Panel
 The side panel provides users with variable toggling parameters that can filter the main panel. Users can determine the visualization format of the main panel according to the parameters.
 
-##1.3 For Main Panel
+## 1.3 For Main Panel
 The main panel is where the visualization will be shown.
 
+# 2 Introduction to main pages 
+## 2.1 Home
+The home page mainly introduces the general situation of GASTech company, the background of the story and the purpose of this application.
+
+## 2.2 Background Analysis
+The background analysis mainly includes two parts: one is to find the most popular location among GASTech employees by screening different payment methods; One is to find the most frequently occurring words in news articles in the past two decades.
+
+### Popular Locations 
+插入图片      
+The popular locations provides an overall view of how often each location is consumed by GASTech employees within two weeks. Users can choose different payment methods - **credit card** consumption and **loyalty card** consumption to distinguish the occurrence times of different locations.
+
+And also this graph is interactive since users can see detailed numbers of each location's frequency.
+
+### Hotpoints of News Articles
+插入图片  
+This interface uses two kinds of visualizing methods - bar chart and word cloud, mainly displays the news information in recent 20 years. By selecting the news of different newspapers, you can find out which words appear most frequently.
+
+The first control panel is used for users to **filter different newspapers**. The second control panel can change the **minimum standard of word frequency** in bar chart. The third panel can control the **maximum number of words** in word cloud.
+
+## 2.3 Consumption Analysis
+Consumption analysis mainly adds the change of time to find the most popular places for GASTech employees on different dates and time periods.
+
+### Consumption Comparison
+插入图片    
+Users can filter out the places with the highest heat according to different **times** and **dates**.
+
+### Consumption of Each Location
+插入图片
+Users can **select different locations** to observe which is consumed the most times on different dates and time periods, so as to obtain the insights of consumption preferences of GASTech employees.
+
+## 2.4 Path Visualization
+插入图片  
+After manipulating GPS data, it can be used to visualize the walking path of each employee in weekdays, and obtain the employee's personal information through unique car ids and present it on the data table.
+
+Each car ID represents an employee. Users can select **different car IDs** to filter the employee paths they want to observe. In the second control panel, you can select **different days of the week**, and the path of employees in the main panel will change accordingly, so as to find suspicious behaviors of employees.
+
+And also, can change the contents in the data table by selecting different car IDs. The data table will tell the user the employee's detailed information, about names, department and position corresponding to this car ID.
