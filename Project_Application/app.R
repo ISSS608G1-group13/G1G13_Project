@@ -184,7 +184,7 @@ words_by_newsgroup <- usenet_words %>%
 
 #Shiny Part
 ui <- fluidPage(
-  theme = shinytheme("Lux"),
+  theme = shinytheme("spacelab"),
   navbarPage(id = "intabset",
              title = "GAStech Employees Behavior Analysis",
              tabPanel(title = "Home", icon = icon("home"),
@@ -304,14 +304,10 @@ ui <- fluidPage(
                             plotlyOutput("gpspath")
                           )
                         )),
-             tabPanel("a",
-                      selectInput("", "Choose credit card:",
-                                  list(`East Coast` = list("NY", "NJ", "CT"),
-                                       `West Coast` = list("WA", "OR", "CA"),
-                                       `Midwest` = list("MN", "WI", "IA"))
-                      ),
-                      submitButton("Update"),
-                      textOutput("result"))
+             tabPanel("Relationship",
+                      
+                      
+                      plotOutput("relationship"))
   ))
 
 
@@ -399,7 +395,7 @@ server <- function(input, output, session) {
     top20 <- head(data, 20)
     top20$word <- reorder(top20$word, top20$n)
     
-    ggplot(top20, aes(x = word, y = n, fill = word, label = n)) +
+    ggplot(top20, aes(x = word, y = n, label = n)) +
       geom_bar(stat="identity", show.legend = FALSE,
                color = "white", fill = "light blue") +
       coord_flip() +
@@ -464,14 +460,27 @@ server <- function(input, output, session) {
     cc_graph <- tbl_graph(nodes = data_node, 
                           edges = data_edges, 
                           directed = FALSE) 
-    visNetwork(data_node,
-               data_edges) %>%
+    visNetwork(cc_nodes,
+               cc_edges) %>%
       visIgraphLayout(layout = "layout_with_fr") %>%
       visOptions(highlightNearest = TRUE,
                  nodesIdSelection = TRUE) %>%
       visLegend() %>%
       visLayout(randomSeed = 123)
     
+  })
+  
+  output$relationship <- renderPlot({
+    collapsibleTree(CarTrack,
+                    hierarchy = c("CurrentEmploymentType", "CurrentEmploymentTitle","Name"),
+                    root = "GASTech",
+                    width = 800,
+                    fill = c("seashell",
+                             rep("brown", length(unique(CarTrack$CurrentEmploymentType))),
+                             rep("khaki", length(unique(paste(CarTrack$CurrentEmploymentType,
+                                                              CarTrack$CurrentEmploymentTitle)))),
+                             rep("forestgreen", length(unique(paste(CarTrack$Name,
+                                                                    CarTrack$CurrentEmploymentType))))))
   })
 
   observeEvent(input$btn_landing, {
