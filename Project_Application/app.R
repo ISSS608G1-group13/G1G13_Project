@@ -38,15 +38,35 @@ car_assignments <- read.csv("./data/car-assignments.csv")
 car_assignments$Name <- paste(car_assignments$FirstName, car_assignments$LastName)
 CarTrack <- car_assignments %>% 
   select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
-
 news <- "./data/News Articles/"
+bgmap <- raster("./data/MC2-tourist.tif/")
+Abila_st <- st_read(dsn = "./data/Geospatial",
+                    layer = "Abila")
 
 # Dataset Process
-
+tm_shape(bgmap) +
+  tm_rgb(bgmap, r = 1,g = 2,b = 3,
+         alpha = NA,
+         saturation = 1,
+         interpolate = TRUE,
+         max.value = 255)
 
 gps$Timestamp <- date_time_parse(gps$Timestamp,
-                                 zone="",
-                                 format="%m/%d/%Y %H:%M")
+                                 zone = "",
+                                 format = "%m/%d/%Y %H:%M")
+gps$weekday = wday(gps$Timestamp, 
+                   label = TRUE, 
+                   abbr = FALSE)
+gps$id <- as_factor(gps$id)
+gps_sf <- st_as_sf(gps, 
+                   coords = c("long", "lat"),
+                   crs= 4326)
+gps_path <- gps_sf %>%
+  group_by(id, weekday) %>%
+  summarize(m = mean(Timestamp), 
+            do_union=FALSE) %>%
+  st_cast("LINESTRING")
+
 creditcard$timestamp <- date_time_parse(creditcard$timestamp,
                                         zone="",
                                         format="%m/%d/%Y %H:%M")
@@ -158,7 +178,7 @@ ui <- fluidPage(
                                      hr(),
                                      sliderInput("freq",
                                                  "Minimum Frequency:",
-                                                 min = 1,  max = 212, value = 5),
+                                                 min = 1,  max = 212, value = 2),
                                      sliderInput("max",
                                                  "Maximum Number of Words:",
                                                  min = 1,  max = 300,  value = 100
@@ -166,24 +186,32 @@ ui <- fluidPage(
                                      submitButton("update", "Update")
                                    ),
                                    mainPanel(
-                                     plotOutput("hotpoints"),
-                                     plotlyOutput("barhotpoints")
+                                     plotlyOutput("barhotpoints"),
+                                     plotOutput("hotpoints")
                                    )
                                  )
                         )),
              navbarMenu("Consumption Analysis",
-                        tabPanel("Hotpoints of News Articles", 
+                        tabPanel("Consumption Comparison", 
                                  value = "tabpanel4",
                                  sidebarLayout(
                                    sidebarPanel(
-                                     "inout"
+                                     checkboxGroupInput("chooselocations",
+                                                        label = "Choose locations to compare:",
+                                                        choices = unique(credit_hour_num$location),
+                                                        selected = unique(credit_hour_num$location)),
+                                     radioButtons("choosetype",
+                                                  label = "Choose day or time:",
+                                                  choices = c("Day"="day",
+                                                              "Time(hour)"="hour")),
+                                     submitButton("update", "Update")
                                    ),
                                    mainPanel(
-                                     "output"
+                                     plotlyOutput("comparison")
                                    )
                                  )
                         ),
-                        tabPanel("Comsumption Time and Value of Location",
+                        tabPanel("Comsumption of Each Location",
                                  value = "tabpanel5",
                       sidebarLayout(
                         sidebarPanel(
@@ -204,23 +232,22 @@ ui <- fluidPage(
                       sidebarLayout(
                         sidebarPanel(
                           selectInput("carid",
-                                      label = "Car ID of employee:",
+                                      label = strong("Car ID of employee:"),
                                       choices = c(1:35),
                                       selected = 1
                           ),
-                          sliderInput("day",
-                                      label = "Days of January, 2014:",
-                                      min = 6,
-                                      max = 19,
-                                      value = c(6,7),
-                                      step = 1),
+                          radioButtons("weekday",
+                                       label = strong("Weekday"),
+                                       choices = unique(gps$weekday),
+                                       selected = "Monday"),
                           submitButton("Update")
-                        ),
-                        
-                        mainPanel(
-                          plotlyOutput("gpspath")
-                        )
-                      )),
+                          ),
+                          mainPanel(
+                            tmapOutput("mapPlot"),
+                            DT::dataTableOutput(outputId = "aTable"),
+                            plotlyOutput("gpspath")
+                          )
+                        )),
              tabPanel("Network",
                       selectInput("state", "Choose a state:",
                                   list(`East Coast` = list("NY", "NJ", "CT"),
@@ -324,6 +351,52 @@ server <- function(input, output, session) {
       labs(title = "Top 20 Most Used Words in News", x = "Word", y = "Word Count") +
       geom_label(aes(fill = word),colour = "white", fontface = "bold", show.legend = FALSE)
   })
+  
+  output$comparison <- renderPlotly({
+    data <- credit_hour_num 
+ #     filter(location==input$chooselocations)
+    
+    plot_ly(data=data,
+            x= ~input$choosetype,
+            y= ~location,
+            z= ~frequency,
+            text = ~paste0("Value:", input$choosetype,     
+                          "<br>Frequency:", frequency,
+                          "<br>Location:",location), 
+            hoverinfo = "text",
+            type = "heatmap") %>%
+      layout(tittle = 'Consumption Comparison of Locations')
+      
+  }) 
+  
+  output$mapPlot <- renderTmap({
+    gps_path_selected <- gps_path %>%
+      arrange(desc(id)) %>% 
+      filter(id==input$carid) %>% 
+      filter(weekday==input$weekday)
+    
+    tm_shape(bgmap) +
+      tm_rgb(bgmap, r = 1,g = 2,b = 3,
+             alpha = NA,
+             saturation = 1,
+             interpolate = TRUE,
+             max.value = 255) +
+      tm_shape(gps_path_selected) +
+      tm_facets(by = "id") +
+      tm_layout(legend.show=FALSE) +
+      tm_lines(col = "weekday", lwd = 7)
+  })
+  
+  output$aTable <- DT::renderDataTable({
+    data <- CarTrack %>% 
+      filter(CarID==input$carid)
+
+      DT::datatable(data = data,
+                    options= list(pageLength = 10),
+                    rownames = FALSE)
+    
+  })
+
   
   observeEvent(input$btn_landing, {
     updateTabsetPanel(session,
