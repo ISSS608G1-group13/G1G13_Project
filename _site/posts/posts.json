@@ -2,19 +2,19 @@
   {
     "path": "posts/2021-08-10-application-and-user-guide/",
     "title": "Application and User Guide",
-    "description": "A short description of the post.",
+    "description": "For Shiny Application created by G1 - Team 13",
     "author": [
       {
-        "name": "G1-Group13",
+        "name": "Yu Yaxin <br>Li Yuhong <br>Xu Dan",
         "url": {}
       }
     ],
     "date": "2021-08-10",
     "categories": [],
-    "contents": "\r\nThe application developed can be accessed from here[].\r\n\r\n\r\n\r\n",
+    "contents": "\r\n\r\nContents\r\nApplication User Guide\r\n1.Interface design1.1 For Navigation Bar\r\n\r\n\r\nApplication User Guide\r\n1.Interface design\r\nThe interface mainly about three parts. 插入图片\r\n1.1 For Navigation Bar\r\nThe top navigation bar has 5 main sections with drop-down selections:\r\ni.Home\r\nii.Background Analysis\r\n+ Popular Locations\r\n+ Hotpoints of News Articles\r\nii.Consumption Analysis\r\n+ Consumption Comparison\r\n+ Consumption of Each Location\r\n+ Consumption Locations of Credit Card\r\niii.Path Visualization\r\n##1.2 For Side Panel The side panel provides users with variable toggling parameters that can filter the main panel. Users can determine the visualization format of the main panel according to the parameters.\r\n##1.3 For Main Panel The main panel is where the visualization will be shown.\r\n\r\n\r\n\r\n",
     "preview": {},
-    "last_modified": "2021-08-10T18:02:04+08:00",
-    "input_file": "application-and-user-guide.knit.md"
+    "last_modified": "2021-08-15T21:13:05+08:00",
+    "input_file": "application-and-user-guide.utf8.md"
   },
   {
     "path": "posts/2021-06-21-proposal/",
@@ -30,12 +30,7 @@
     "categories": [],
     "contents": "\r\n1. Motivation1\r\nMovement data in space and time provide critical information about the behavior of objects studied, i.e., vehicles, humans, and animals. Insights from spatial and temporal movements drive many human and ecological studies. These studies enable in-depth analysis and understanding of complex processes like human migration, forest fires and natural disasters as well as mobility and transportation.\r\nA person’s life and consumption path can provide abundant information for us. As GPS data are becoming increasingly prevalent as locational information in movement studies, we can identify the most probable route from a set of GPS pedestrian trajectories and consumption information. We can further demonstrate the relationship between uncertainty in individual GPS measurements at different scales and how these affect the fine-scale movement descriptions.\r\n2. Problems Introduction\r\nIdentify the complex relationships among all of these people and organizations.\r\nIdentify anomalies and suspicious behaviors.\r\nIdentify which people use which credit and loyalty cards.\r\n3. Related Work\r\nTry to figure out the tracks of all the employees based on the GPS tracking of cars and loyalty cards, and then compare the GPS track with the location of celebration. Map the tracks of employee in the map provided, and the map will show the tracks and locations of consumption dynamically. At the same time, by using the unique loyalty number, unique card number and tracks we can identify which people use which credit and loyalty cards.\r\nPlot the consumption of employees, and then find out the suspicious behaviors, like extremely high consumption, repeated consumption in some special locations or make some consumptions nearby the location of celebration on the date of celebration.\r\nMake the employees’ relationship net based on the GPS information. We may see some people will have similar tracks in some dates, and then we can get that they will have more intimate relationships. If a person appears in one location repeatedly, he or she may have potential relationship with this organization.\r\n4. Approach\r\nUse R to clean and tidy data: clean missing values and combine some dataset for further analysis. The package of R used will be tidyr and dplyr.\r\nVisualisation: two kinds of graphs will be plotted. The first one is path diagram which is aim to plot the living and working track of each employee. The another one is relationship net graph. According to these two graphs we will summarize special information for readers.\r\nR shiny: make an application that can see the current employment information, GPS tracks, consumption information and relationship net of each employee. In this application, any suspicious behaviors or special locations will be highlighted.\r\nText analysis: By using the dataset from other challenges, we will analyze the resumes of employees in Challenge 1.\r\nBuild the GitHub Link and Website.\r\n\r\n\r\n\r\n",
     "preview": {},
-<<<<<<< HEAD
-    "last_modified": "2021-08-11T22:30:30+08:00",
-    "input_file": "proposal.knit.md"
-=======
-    "last_modified": "2021-08-12T19:37:34+08:00",
-    "input_file": "proposal.utf8.md"
->>>>>>> 768fb27559b11d75efc0908b90ca8785c90ae372
+    "last_modified": "2021-08-15T20:37:09+08:00",
+    "input_file": {}
   }
 ]
