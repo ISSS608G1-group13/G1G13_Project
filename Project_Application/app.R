@@ -38,7 +38,6 @@ library(hms)
 library(tidyverse)
 library(tidygraph)
 library(collapsibleTree)
-library(shinyjs)
 library(heatmaply)
 
 # Import dataset 
@@ -199,24 +198,6 @@ words_by_newsgroup <- usenet_words %>%
   count(newsgroup, word, sort = TRUE) %>%
   ungroup()
 
-# Calculate and select rows with the time difference larger than 300 seconds
-gps_stop <- gps
-
-gps_stop <- gps_stop %>% 
-  arrange(id,Timestamp)
-
-gps_stop$tdiff <- unlist(tapply(gps_stop$Timestamp, INDEX = gps_stop$id,
-                                FUN = function(x) c(0, `units<-`(diff(x),"secs"))))
-
-gps_stop <- gps_stop %>% 
-  filter(tdiff>300) %>% 
-  rename(endtime=Timestamp) %>% 
-  mutate(starttime=endtime-tdiff)
-
-gps_stop_sf <- st_as_sf(gps_stop,                   
-                        coords=c("long","lat"),
-                        crs=4326)
-
 
 #Shiny Part
 ui <- fluidPage(
@@ -237,9 +218,9 @@ ui <- fluidPage(
                                          column(4, wellPanel(h4("Dataset Introduction", 
                                                                 align="center"),
                                                              h5("Four dataset, Employees' credit card and loyalty card transactions recordings,
-                                                             GPS tracking of GAStech employees,
+                                                             GPS tracking of GAStech employees within two weeks,
                                                              employment information, and
-                                                             historical news reports of Kronos, were used to built this application.                                                                      ")
+                                                             historical news reports of Kronos, were used to built this application.")
                                          )),
                                          column(4, wellPanel(h4("Application Goal", 
                                                                 align="center"),
@@ -325,12 +306,7 @@ ui <- fluidPage(
                                        label = strong("Weekday"),
                                        choices = unique(gps$weekday),
                                        selected = "Monday"),
-                          helpText("The following choice is only avaiable for stop point graph:"),
-                          sliderInput("pointsday", 
-                                      "Choose the day for stop points:", 
-                                      min=6, 
-                                      max=19,
-                                      value=c(7,8)),
+                          
                           submitButton("Update")
                           ),
                           mainPanel(
@@ -338,10 +314,7 @@ ui <- fluidPage(
                                tabPanel("Employee Path",
                                         tmapOutput("mapPlot"),
                                         DT::dataTableOutput(outputId = "aTable"),
-                                        plotlyOutput("gpspath")),
-                               tabPanel("Stop Points",
-                                        tmapOutput("mapPlot"),
-                                        plotlyOutput("stoppoints")))
+                                        plotlyOutput("gpspath")))
                             
                           )
                         )),
@@ -518,7 +491,8 @@ server <- function(input, output, session) {
     
   })
   
- 
+  
+
 
   
 }
