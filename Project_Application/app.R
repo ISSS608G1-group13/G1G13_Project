@@ -38,6 +38,8 @@ library(hms)
 library(tidyverse)
 library(tidygraph)
 library(collapsibleTree)
+library(shinyjs)
+library(heatmaply)
 
 # Import dataset 
 location_num <- read_csv("data/location num.csv")
@@ -197,6 +199,23 @@ words_by_newsgroup <- usenet_words %>%
   count(newsgroup, word, sort = TRUE) %>%
   ungroup()
 
+# Calculate and select rows with the time difference larger than 300 seconds
+gps_stop <- gps
+
+gps_stop <- gps_stop %>% 
+  arrange(id,Timestamp)
+
+gps_stop$tdiff <- unlist(tapply(gps_stop$Timestamp, INDEX = gps_stop$id,
+                                FUN = function(x) c(0, `units<-`(diff(x),"secs"))))
+
+gps_stop <- gps_stop %>% 
+  filter(tdiff>300) %>% 
+  rename(endtime=Timestamp) %>% 
+  mutate(starttime=endtime-tdiff)
+
+gps_stop_sf <- st_as_sf(gps_stop,                   
+                        coords=c("long","lat"),
+                        crs=4326)
 
 
 #Shiny Part
@@ -207,15 +226,26 @@ ui <- fluidPage(
              tabPanel(title = "Home", icon = icon("home"),
                       value = "tabpanel1",
                       mainPanel(width = 15, style="margin-left:0%; margin-right:4%",
-                                fluidRow(column(7,(h3("Welcome to GAStech Employees Behavior Analysis Tool", style="margin-top:0px;"))),
-                                        (column(4,actionButton("help_landing",
-                                                               label="Help: User Guide",
-                                                               icon=icon('question-circle'),
-                                                               class="down"),
-                                                ))),
-                                fluidRow(column(4, wellPanel(h4("Introduction of GAStech", align="center"),
-                                                             h5("GAStech, an oil-products company from Tethys, is expanding into Kronos - an island country, built good relations with the local government as well. Not only GAStech got considerable profit, but also has an impact on the local natural environment.", font-family:monospace)
-                                         ))),
+                                fluidRow(column(12,(h3("Welcome to GAStech Employees Behavior Analysis Tool", 
+                                                       style="margin-top:0px;",
+                                                       align="center")))
+                                         ),
+                                fluidRow(column(4, wellPanel(h4("GAStech Introduction", 
+                                                                align="center"),
+                                                             h5("GAStech, an oil-products company from Tethys, is expanding into Kronos - an island country, built good relations with the local government as well. Not only GAStech got considerable profit, but also has an impact on the local natural environment.")
+                                         )),
+                                         column(4, wellPanel(h4("Dataset Introduction", 
+                                                                align="center"),
+                                                             h5("Four dataset, Employees' credit card and loyalty card transactions recordings,
+                                                             GPS tracking of GAStech employees,
+                                                             employment information, and
+                                                             historical news reports of Kronos, were used to built this application.                                                                      ")
+                                         )),
+                                         column(4, wellPanel(h4("Application Goal", 
+                                                                align="center"),
+                                                             h5("This application was build for analyzing personal behaviors and social background of GAStech employees by using sample data of employees' daily routes,  employees' transcation recordings within two weeks and previous news reports.")
+                                         ))
+                                         )
                       )
              ),
              navbarMenu("Background Analysis",
@@ -260,22 +290,7 @@ ui <- fluidPage(
                                  )
                         )),
              navbarMenu("Consumption Analysis",
-                        tabPanel("Consumption Comparison", 
-                                 value = "tabpanel4",
-                                 sidebarLayout(
-                                   sidebarPanel(
-                                     
-                                     radioButtons("choosetype",
-                                                  label = "Choose day or time:",
-                                                  choices = c("Day"="day",
-                                                              "Time(hour)"="hour")),
-                                     submitButton("Update")
-                                   ),
-                                   mainPanel(
-                                     plotlyOutput("comparison")
-                                   )
-                                 )
-                        ),
+                       
                         tabPanel("Comsumption of Each Location",
                                  value = "tabpanel5",
                       sidebarLayout(
@@ -310,6 +325,12 @@ ui <- fluidPage(
                                        label = strong("Weekday"),
                                        choices = unique(gps$weekday),
                                        selected = "Monday"),
+                          helpText("The following choice is only avaiable for stop point graph:"),
+                          sliderInput("pointsday", 
+                                      "Choose the day for stop points:", 
+                                      min=6, 
+                                      max=19,
+                                      value=c(7,8)),
                           submitButton("Update")
                           ),
                           mainPanel(
@@ -319,6 +340,7 @@ ui <- fluidPage(
                                         DT::dataTableOutput(outputId = "aTable"),
                                         plotlyOutput("gpspath")),
                                tabPanel("Stop Points",
+                                        tmapOutput("mapPlot"),
                                         plotlyOutput("stoppoints")))
                             
                           )
@@ -348,7 +370,7 @@ server <- function(input, output, session) {
   output$consumption_hour <- renderPlotly({
     #Build new dataset for selected location
     data <- credit_hour_num %>% 
-      filter(location==input$location) 
+      filter(location==input$location)
     
     #Draw the heatmap
     ggplot(data=data,
@@ -365,7 +387,12 @@ server <- function(input, output, session) {
            y="Hour",
            title="Frequency of Credit Card Purchase")+
       theme(plot.title=element_text(hjust=0.5))
+    
+    
+    
   })
+  
+  
   
   output$consumption_value <- renderPlotly({
     #Build new dataset for selected location
@@ -420,22 +447,20 @@ server <- function(input, output, session) {
       geom_label(aes(fill = word),colour = "white", fontface = "bold", show.legend = FALSE)
   })
   
-  output$comparison <- renderPlotly({
+  output$comparison <- renderPlot({
     data <- credit_hour_num %>%
       group_by(location,input$choosetype) %>% 
       summarise(frequency=sum(frequency))
     
-    name <- names(data)
+    data <- spread(data,input$choosetype,frequency)
+    data[is.na(data)] <- 0
     
-    ggplot(data=data,
-           aes(x=name[2],y=location,fill=frequency))+
-      geom_tile()+
-      scale_fill_gradient2(low="blue",
-                           high="red",
-                           na.value = 'white')+
-      labs(x="Day",
-           title="Frequency of Credit Card Purchase")+
-      theme(plot.title=element_text(hjust=0.5))
+    #Draw the heatmap
+    heatmap(data,Colv = NA, Rowv = NA,col = heat.colors(256),scale="column", 
+              margins=c(5,10),
+              xlab="Day", ylab="Hour", main="Heatmap of Transaction Distribution")
+    
+  
       
   }) 
   
@@ -469,8 +494,8 @@ server <- function(input, output, session) {
   
   output$cc_locations <- renderVisNetwork({
     
-    visNetwork(data_node,
-               data_edges) %>%
+    visNetwork(cc_nodes,
+               cc_edges) %>%
       visIgraphLayout(layout = "layout_with_fr") %>%
       visOptions(highlightNearest = TRUE,
                  nodesIdSelection = TRUE) %>%
@@ -493,10 +518,7 @@ server <- function(input, output, session) {
     
   })
   
-  observeEvent(input$help_landing, {
-    updatetabpanel(session, "tabpanel5",selected = "panel2")
-  })
-
+ 
 
   
 }
