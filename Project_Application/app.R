@@ -40,11 +40,11 @@ library(tidygraph)
 
 # Import dataset 
 location_num <- read_csv("./data/location num.csv")
-bgmap <- raster("./data/MC2-tourist.tif")
+bgmap <- raster("./data/MC2-tourist.tif/")
 Abila_st <- st_read(dsn = "./data/Geospatial",
                     layer = "Abila")
 gps <- read_csv("./data/gps.csv")
-location_frequency <- read.csv("./data/location frequency.csv/")
+location_frequency <- read.csv("./data/location frequency.csv")
 carassign <- read_csv("./data/car-assignments.csv")
 creditcard <- read.csv("./data/cc_data.csv")
 loyaltycard <- read.csv("./data/loyalty_data.csv")
