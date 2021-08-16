@@ -416,8 +416,7 @@ server <- function(input, output, session) {
       geom_bar(stat="identity", show.legend = FALSE,
                color = "white", fill = "light blue") +
       coord_flip() +
-      labs(title = "Top 20 Most Used Words in News", x = "Word", y = "Word Count") +
-      geom_label(aes(fill = word),colour = "white", fontface = "bold", show.legend = FALSE)
+      labs(title = "Top 20 Most Used Words in News", x = "Word", y = "Word Count")
   })
   
   output$comparison <- renderPlot({
