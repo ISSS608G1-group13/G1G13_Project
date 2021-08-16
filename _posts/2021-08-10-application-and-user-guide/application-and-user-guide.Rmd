@@ -25,7 +25,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # 1 Interface design
 The interface mainly about three parts.
-插入图片
+
+![Interface]
 
 ## 1.1 For Navigation Bar
 The top navigation bar has 5 main sections with drop-down selections:  
