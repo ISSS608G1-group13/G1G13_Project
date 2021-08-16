@@ -37,26 +37,27 @@ library(lubridate)
 library(hms)
 library(tidyverse)
 library(tidygraph)
+library(collapsibleTree)
 
 # Import dataset 
-location_num <- read_csv("./data/location num.csv")
-bgmap <- raster("./data/MC2-tourist.tif/")
-Abila_st <- st_read(dsn = "./data/Geospatial",
+location_num <- read_csv("data/location num.csv")
+bgmap <- raster("data/MC2-tourist.tif/")
+Abila_st <- st_read(dsn = "data/Geospatial",
                     layer = "Abila")
-gps <- read_csv("./data/gps.csv")
-location_frequency <- read.csv("./data/location frequency.csv")
-carassign <- read_csv("./data/car-assignments.csv")
-creditcard <- read.csv("./data/cc_data.csv")
-loyaltycard <- read.csv("./data/loyalty_data.csv")
+gps <- read_csv("data/gps.csv")
+location_frequency <- read.csv("data/location frequency.csv")
+carassign <- read_csv("data/car-assignments.csv")
+creditcard <- read.csv("data/cc_data.csv")
+loyaltycard <- read.csv("data/loyalty_data.csv")
 
-car_assignments <- read.csv("./data/car-assignments.csv")
+car_assignments <- read.csv("data/car-assignments.csv")
 
 car_assignments$Name <- paste(car_assignments$FirstName, car_assignments$LastName)
 CarTrack <- car_assignments %>% 
   select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
-news <- "./data/News Articles/"
-bgmap <- raster("./data/MC2-tourist.tif/")
-Abila_st <- st_read(dsn = "./data/Geospatial",
+news <- "data/News Articles/"
+bgmap <- raster("data/MC2-tourist.tif/")
+Abila_st <- st_read(dsn = "data/Geospatial",
                     layer = "Abila")
 
 # Dataset Process
@@ -207,11 +208,14 @@ ui <- fluidPage(
                       value = "tabpanel1",
                       mainPanel(width = 15, style="margin-left:0%; margin-right:4%",
                                 fluidRow(column(7,(h3("Welcome to GAStech Employees Behavior Analysis Tool", style="margin-top:0px;"))),
-                                         (column(4,actionButton("btn_landing",label="Help: User Guide",icon=icon('question-circle'),class="down")))),
-                                fluidRow(wellPanel(column(4, "GAStech, an oil-products company from Tethys, is expanding into Kronos - an island country, built good relations with the local government as well.Not only GAStech got considerable profit, but also has an impact on the local natural environment. At the beginning of 1997,the residents of Elodis agricultural town located near the capital of Kronos began to pay attention to an abnormal increase in the occurrence of illnesses such as cancer and birth defects.And they believe this is related to Gastech’s business. The residents set up their own POK (Protectors of Kronos) organization to protect the ecological environment in Kronos and prevent continuous deterioration.
-
-During Gastech’s celebration party in 2014, the unexplained disappearance of some employees was suspected to be related to the POK organization. And now we got the employees’ credit card and loyalty card transaction data, and also their GPS record, to identify anomalies. Due to this, the purpose of this report is to analyze the consumption behaviors of employees at different times and places, use R Studio to visualize the data, screen the existing suspicious behaviors, match the employees with varies of crads, and draw suggestions and conclusions.")
-                                         )),
+                                        (column(4,actionButton("help_landing",
+                                                               label="Help: User Guide",
+                                                               icon=icon('question-circle'),
+                                                               class="down"),
+                                                ))),
+                                fluidRow(column(4, wellPanel(h4("Introduction of GAStech", align="center"),
+                                                             h5("GAStech, an oil-products company from Tethys, is expanding into Kronos - an island country, built good relations with the local government as well. Not only GAStech got considerable profit, but also has an impact on the local natural environment.", font-family:monospace)
+                                         ))),
                       )
              ),
              navbarMenu("Background Analysis",
@@ -291,19 +295,9 @@ During Gastech’s celebration party in 2014, the unexplained disappearance of s
                       )),
                       tabPanel("Consumption Locations of Credit Card", 
                                value = "tabpanel4",
-                               sidebarLayout(
-                                 sidebarPanel(
-                                   selectInput("cc_card", 
-                                               "Choose credit card:",
-                                               choices = unique(creditcard_final_net$last4ccnum),
-                                               selected = 3484),
-                                   submitButton("Update")
-                                 ),
-                                 mainPanel(
-                                   plotOutput("cc_locations")
-                                 )
+                               visNetworkOutput("cc_locations")
                                )
-                      )),
+                      ),
              tabPanel("Path Visualization", 
                       sidebarLayout(
                         sidebarPanel(
@@ -319,15 +313,18 @@ During Gastech’s celebration party in 2014, the unexplained disappearance of s
                           submitButton("Update")
                           ),
                           mainPanel(
-                            tmapOutput("mapPlot"),
-                            DT::dataTableOutput(outputId = "aTable"),
-                            plotlyOutput("gpspath")
+                            tabsetPanel(
+                               tabPanel("Employee Path",
+                                        tmapOutput("mapPlot"),
+                                        DT::dataTableOutput(outputId = "aTable"),
+                                        plotlyOutput("gpspath")),
+                               tabPanel("Stop Points",
+                                        plotlyOutput("stoppoints")))
+                            
                           )
                         )),
              tabPanel("Relationship",
-                      
-                      
-                      plotOutput("relationship"))
+                      collapsibleTreeOutput("relationship"))
   ))
 
 
@@ -470,18 +467,10 @@ server <- function(input, output, session) {
     
   })
   
-  output$cc_locations <- renderPlot({
-    data_node <- cc_nodes %>% 
-      filter(label==input$cc_card)
+  output$cc_locations <- renderVisNetwork({
     
-    data_edges <- cc_edges %>% 
-      filter(from==input$cc_card)
-    
-    cc_graph <- tbl_graph(nodes = data_node, 
-                          edges = data_edges, 
-                          directed = FALSE) 
-    visNetwork(cc_nodes,
-               cc_edges) %>%
+    visNetwork(data_node,
+               data_edges) %>%
       visIgraphLayout(layout = "layout_with_fr") %>%
       visOptions(highlightNearest = TRUE,
                  nodesIdSelection = TRUE) %>%
@@ -490,7 +479,7 @@ server <- function(input, output, session) {
     
   })
   
-  output$relationship <- renderPlot({
+  output$relationship <- renderCollapsibleTree({
     collapsibleTree(CarTrack,
                     hierarchy = c("CurrentEmploymentType", "CurrentEmploymentTitle","Name"),
                     root = "GASTech",
@@ -501,13 +490,15 @@ server <- function(input, output, session) {
                                                               CarTrack$CurrentEmploymentTitle)))),
                              rep("forestgreen", length(unique(paste(CarTrack$Name,
                                                                     CarTrack$CurrentEmploymentType))))))
+    
+  })
+  
+  observeEvent(input$help_landing, {
+    updatetabpanel(session, "tabpanel5",selected = "panel2")
   })
 
-  observeEvent(input$btn_landing, {
-    updateTabsetPanel(session,
-                      "intabset" ,
-                      selected = "tabpanel2")
-  })
+
+  
 }
 
 # Run the application 
