@@ -54,7 +54,7 @@ The side panel provides users with variable toggling parameters that can filter 
 ## 1.3 For Main Panel
 The main panel is where the visualization will be shown.
 
-# 2 Introduction to main pages 
+# 2 Introduction of main pages 
 ## 2.1 Home
 The home page mainly introduces the general situation of GASTech company, the background of the story and the purpose of this application.
 
