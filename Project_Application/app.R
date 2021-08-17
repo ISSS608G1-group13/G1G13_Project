@@ -42,7 +42,7 @@ library(heatmaply)
 
 # Import dataset 
 location_num <- read_csv("data/location num.csv")
-bgmap <- raster("data/MC2-tourist.tif/")
+bgmap <- raster("data/MC2-tourist.tif")
 Abila_st <- st_read(dsn = "data/Geospatial",
                     layer = "Abila")
 gps <- read_csv("data/gps.csv")
@@ -56,10 +56,7 @@ car_assignments <- read.csv("data/car-assignments.csv")
 car_assignments$Name <- paste(car_assignments$FirstName, car_assignments$LastName)
 CarTrack <- car_assignments %>% 
   select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
-news <- "data/News Articles/"
-bgmap <- raster("data/MC2-tourist.tif/")
-Abila_st <- st_read(dsn = "data/Geospatial",
-                    layer = "Abila")
+news <- "data/News Articles"
 
 # Dataset Process
 tm_shape(bgmap) +
@@ -198,6 +195,25 @@ words_by_newsgroup <- usenet_words %>%
   count(newsgroup, word, sort = TRUE) %>%
   ungroup()
 
+# Stop points part data process
+# Calculate and select rows with the time difference larger than 300 seconds
+gps_stop <- gps
+
+gps_stop <- gps_stop %>% 
+  arrange(id,Timestamp)
+
+gps_stop$tdiff <- unlist(tapply(gps_stop$Timestamp, INDEX = gps_stop$id,
+                                FUN = function(x) c(0, `units<-`(diff(x),"secs"))))
+
+gps_stop <- gps_stop %>% 
+  filter(tdiff>300) %>% 
+  rename(endtime=Timestamp) %>% 
+  mutate(starttime=endtime-tdiff)
+
+gps_stop_sf <- st_as_sf(gps_stop,                   
+                        coords=c("long","lat"),
+                        crs=4326)
+
 
 #Shiny Part
 ui <- fluidPage(
@@ -306,7 +322,12 @@ ui <- fluidPage(
                                        label = strong("Weekday"),
                                        choices = unique(gps$weekday),
                                        selected = "Monday"),
-                          
+                          helpText("The following choice is ONLY avariable for Employee Stop Points (stop time larger than 5 min) Part:"),
+                          selectInput("pointsday",
+                                      label = strong("The day of Jan, 2014:"),
+                                      choices = c(6:19),
+                                      selected = 6),
+                          helpText("(6/1/2014 is Monday.)"),
                           submitButton("Update")
                           ),
                           mainPanel(
@@ -314,7 +335,12 @@ ui <- fluidPage(
                                tabPanel("Employee Path",
                                         tmapOutput("mapPlot"),
                                         DT::dataTableOutput(outputId = "aTable"),
-                                        plotlyOutput("gpspath")))
+                                        plotlyOutput("gpspath")
+                                        ),
+                               tabPanel("Employee Stop Points",
+                                        tmapOutput("stoppoints")
+                                        )
+                               )
                             
                           )
                         )),
@@ -451,7 +477,7 @@ server <- function(input, output, session) {
       tm_shape(gps_path_selected) +
       tm_facets(by = "id") +
       tm_layout(legend.show=FALSE) +
-      tm_lines(col = "weekday", lwd = 7)
+      tm_lines(col = "weekday", lwd = 2)
   })
   
   output$aTable <- DT::renderDataTable({
@@ -490,9 +516,25 @@ server <- function(input, output, session) {
     
   })
   
-  
-
-
+  output$stoppoints <- renderTmap({
+    # Select the dataset for ID 1 car 
+    gps_stop_sf_selected <- gps_stop_sf
+    gps_stop_sf_selected$day <- get_day(gps_stop_sf_selected$starttime)
+    gps_stop_sf_selected <- gps_stop_sf_selected %>% 
+      filter(day==input$pointsday) %>% 
+      filter(id==input$carid)
+    
+    # Plot the map, GPS path and stop-by points
+    tm_shape(bgmap) +
+      tm_rgb(bgmap, r = 1,g = 2,b = 3,
+             alpha = NA,
+             saturation = 1,
+             interpolate = TRUE,
+             max.value = 255) +
+      tm_shape(gps_stop_sf_selected) +
+      tm_dots(size = 0.075,
+              col = "blue")
+  })
   
 }
 
