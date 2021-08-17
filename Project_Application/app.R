@@ -43,7 +43,6 @@ library(heatmaply)
 # Import dataset 
 location_num <- read_csv("data/location num.csv")
 bgmap <- raster("data/MC2-tourist.tif")
-
 gps <- read_csv("data/gps.csv")
 location_frequency <- read.csv("data/location frequency.csv")
 carassign <- read_csv("data/car-assignments.csv")
