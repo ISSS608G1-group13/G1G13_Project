@@ -470,6 +470,7 @@ server <- function(input, output, session) {
       tm_facets(by = "id") +
       tm_layout(legend.show=FALSE) +
       tm_lines(col = "weekday", lwd = 2)
+    
   })
   
   output$aTable <- DT::renderDataTable({
@@ -527,6 +528,7 @@ server <- function(input, output, session) {
       tm_dots(size = 0.075,
               col = "blue")
   })
+  
   
 }
 
