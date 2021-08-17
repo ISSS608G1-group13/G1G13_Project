@@ -1,7 +1,7 @@
 ---
 title: "Poster"
 description: |
-  A short description of the post.
+  The poster show.
 author:
   - name: Yu Yaxin <br>Li Yuhong <br>Xu Dan
     url: {}
@@ -16,5 +16,5 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-The link of poster is available [here](./Poster-G1G13.html/).
+![](Poster.png)
 

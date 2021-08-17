@@ -22,7 +22,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 # Abstract
 Interactive applications developed using Shiny for the R language can satisfy move disciplines interested in movement which are visualization and visual analytics (Ware C. 2013). Shiny allows customizing the user interface of the application, providing an elegant environment for displaying user input controls and analog output-the latter is updated at the same time as the input changes. The flexible nature of R language makes it possible to freely choose and observe the movement trajectories of different objects, thus promoting the combination of Shiny and R in model visualization.
 

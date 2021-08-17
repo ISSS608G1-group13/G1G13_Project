@@ -15,7 +15,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-# 1.	Motivation1
+# 1.	Motivation
 
 Movement data in space and time provide critical information about the behavior of objects studied, i.e., vehicles, humans, and animals. Insights from spatial and temporal movements drive many human and ecological studies. These studies enable in-depth analysis and understanding of complex processes like human migration, forest fires and natural disasters as well as mobility and transportation.
 
