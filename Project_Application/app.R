@@ -43,8 +43,7 @@ library(heatmaply)
 # Import dataset 
 location_num <- read_csv("data/location num.csv")
 bgmap <- raster("data/MC2-tourist.tif")
-Abila_st <- st_read(dsn = "data/Geospatial",
-                    layer = "Abila")
+
 gps <- read_csv("data/gps.csv")
 location_frequency <- read.csv("data/location frequency.csv")
 carassign <- read_csv("data/car-assignments.csv")
@@ -59,17 +58,10 @@ CarTrack <- car_assignments %>%
 news <- "data/News Articles"
 
 # Dataset Process
-tm_shape(bgmap) +
-  tm_rgb(bgmap, r = 1,g = 2,b = 3,
-         alpha = NA,
-         saturation = 1,
-         interpolate = TRUE,
-         max.value = 255)
-
 gps$Timestamp <- date_time_parse(gps$Timestamp,
                                  zone = "",
                                  format = "%m/%d/%Y %H:%M")
-gps$weekday = wday(gps$Timestamp, 
+gps$weekday <- wday(gps$Timestamp, 
                    label = TRUE, 
                    abbr = FALSE)
 gps$id <- as_factor(gps$id)
@@ -320,7 +312,7 @@ ui <- fluidPage(
                           ),
                           radioButtons("weekday",
                                        label = strong("Weekday"),
-                                       choices = unique(gps$weekday),
+                                       choices = c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"),
                                        selected = "Monday"),
                           helpText("The following choice is ONLY avariable for Employee Stop Points (stop time larger than 5 min) Part:"),
                           selectInput("pointsday",
