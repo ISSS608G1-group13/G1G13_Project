@@ -1,7 +1,7 @@
 ---
 title: "Employee Behavior Analysis Based on Personal Information and Social Background"
 description: |
-     Research paper
+     Practice research paper of the project.
   
 author:
   - name: Yu Yaxin    

@@ -1,13 +1,18 @@
 ---
 title: "Proposal"
 description: |
-  This is the proposal of the project.
+  Proposal of the project.
 author:
-  - name: G1-Group13
+  - name: Yu Yaxin    
+          <br>Li Yuhong      
+          <br>Xu Dan
 date: 06-21-2021
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
+    toc_depth: 3
+    number_sections: true
 ---
 
 

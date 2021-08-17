@@ -1,9 +1,11 @@
 ---
 title: "Poster"
 description: |
-  The poster show.
+  Poster of the project.
 author:
-  - name: Yu Yaxin <br>Li Yuhong <br>Xu Dan
+  - name: Yu Yaxin    
+          <br>Li Yuhong      
+          <br>Xu Dan
     url: {}
 date: 08-15-2021
 output:

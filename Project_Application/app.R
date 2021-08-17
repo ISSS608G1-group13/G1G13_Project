@@ -48,15 +48,13 @@ location_frequency <- read.csv("data/location frequency.csv")
 carassign <- read_csv("data/car-assignments.csv")
 creditcard <- read.csv("data/cc_data.csv")
 loyaltycard <- read.csv("data/loyalty_data.csv")
-
 car_assignments <- read.csv("data/car-assignments.csv")
-
-car_assignments$Name <- paste(car_assignments$FirstName, car_assignments$LastName)
-CarTrack <- car_assignments %>% 
-  select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
 news <- "data/News Articles"
 
 # Dataset Process
+car_assignments$Name <- paste(car_assignments$FirstName, car_assignments$LastName)
+CarTrack <- car_assignments %>% 
+  select(CarID,CurrentEmploymentTitle,CurrentEmploymentType,Name)
 gps$Timestamp <- date_time_parse(gps$Timestamp,
                                  zone = "",
                                  format = "%m/%d/%Y %H:%M")
@@ -72,7 +70,6 @@ gps_path <- gps_sf %>%
   summarize(m = mean(Timestamp), 
             do_union=FALSE) %>%
   st_cast("LINESTRING")
-
 creditcard$timestamp <- date_time_parse(creditcard$timestamp,
                                         zone="",
                                         format="%m/%d/%Y %H:%M")
@@ -84,7 +81,6 @@ loyaltycard$timestamp <- date_time_parse(loyaltycard$timestamp,
 # Network part data process
 # Transforming data
 creditcard_final_net <- creditcard
-
 creditcard_final_net$last4ccnum <- as.character(creditcard_final_net$last4ccnum)
 creditcard_final_net$Day  <-  get_day(creditcard_final_net$timestamp)
 creditcard_final_net$Hour <-  get_hour(creditcard_final_net$timestamp)
